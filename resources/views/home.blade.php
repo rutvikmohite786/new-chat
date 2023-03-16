@@ -98,7 +98,17 @@
     </main>
     <script src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
     <script>
-    var socket = io.connect('http://127.0.0.1:3000');
+        var socket = io.connect('http://127.0.0.1:3000');
+
+        socket.on('connect', () => {
+            console.log(socket.id);
+
+        });
+
+        socket.once("message", (mess) => {
+              console.log(mess)
+        });
+
 
     </script>
 </body>

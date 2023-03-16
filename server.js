@@ -9,18 +9,33 @@ var io = require('socket.io')(server, {
 
 const users = {};
 server.listen(3000);
-io.on('connection', function (socket) {
+// var arry = []
+io.on('connection', async function (socket) {
+  
     console.log("Server Running...");
-    console.log(socket.id);
+    // console.log(socket.id);
+    // arry.push(socket.id)
 
-    socket.on('login', function (data) {
-        console.log('User: ' + data.userId + ' connected');
-        // saving userId to object with socket ID
-        users[socket.id] = data.userId;
-        io.emit('user_connected', users);
-    });
+    // console.log(arry,'jhjhjhhj')
+    const sockets = await io.fetchSockets();
+    for (const socket of sockets) {
+        console.log(socket.id);
+        io.to(socket.id).emit('message', 'for your eyes only');
+    }
 
-    console.log("new client connected");
+
+    // socket.on('create', function (room) {
+    //     console.log(room)
+    //     socket.nickname = 'Earl';
+    //     socket.join(room);
+    // });
+
+    // var roster = io.of('/').in('room1').clients;
+    // console.log(roster)
+
+    // roster.forEach(function (client) {
+    //     console.log('Username: ' + client.nickname);
+    // });
 
     socket.on('disconnect', function () {
         console.log('User: ' + users[socket.id] + ' disconnected');
@@ -36,3 +51,4 @@ io.on('connection', function (socket) {
 io.on('connect_error', function (err) {
     console.log('this is error-- ' + err.message);
 });
+
