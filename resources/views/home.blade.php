@@ -111,6 +111,9 @@
         });
 
 
+        console.log(socket.id,'socketid')
+
+
     </script>
 </body>
 </html>
