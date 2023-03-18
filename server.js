@@ -1,3 +1,4 @@
+
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {
@@ -9,7 +10,7 @@ var io = require('socket.io')(server, {
 
 const users = {};
 server.listen(3000);
-// var arry = []
+var arry = []
 io.on('connection', async function (socket) {
   
     console.log("Server Running...");
@@ -17,11 +18,25 @@ io.on('connection', async function (socket) {
     // arry.push(socket.id)
 
     // console.log(arry,'jhjhjhhj')
+    arry = []
+
     const sockets = await io.fetchSockets();
     for (const socket of sockets) {
         console.log(socket.id);
-        io.to(socket.id).emit('message', 'for your eyes only');
+        arry.push(socket.id)
+        //io.to(socket.id).emit('message', 'for your eyes only');
     }
+
+
+
+    // console.log(arry)
+
+    function removeDuplicates(arry) {
+        return arry.filter((item,
+            index) => arry.indexOf(item) === index);
+    }
+    console.log(removeDuplicates(arry));
+
 
 
     // socket.on('create', function (room) {
@@ -36,6 +51,21 @@ io.on('connection', async function (socket) {
     // roster.forEach(function (client) {
     //     console.log('Username: ' + client.nickname);
     // });
+    
+
+    //socket.join("room1");
+    // socket.room = 'room1';
+
+    var a = io.sockets.adapter.rooms.get('room1')
+    if(a){
+        if(a.size<2){
+            socket.join("room1");
+            console.log('enter')
+            io.to("room1").emit('message', 'for your eyes only 1');
+        }
+    }else{
+        socket.join("room1");
+    }    
 
     socket.on('disconnect', function () {
         console.log('User: ' + users[socket.id] + ' disconnected');

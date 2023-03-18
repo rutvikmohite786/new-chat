@@ -84,6 +84,7 @@
             <br>
 
             <section id="letchat">Hello, how are you?</section>
+            <input type="hidden" id="socket_id" value="">
 
             <section id="firstText">Hello, how are you?</section>
             <section id="firstText">Hello, how are you?</section>
@@ -102,7 +103,7 @@
 
         socket.on('connect', () => {
             console.log(socket.id);
-
+            $('#socket_id').val(socket.id)
         });
 
         socket.once("message", (mess) => {
