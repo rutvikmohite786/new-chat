@@ -30,31 +30,6 @@ io.on('connection', async function (socket) {
     }
     console.log(removeDuplicates(arry));
 
-    // console.log(arry.includes(socket.id))
-    // console.log(arry.length)
-
-    // for (var i = 0; i < arry.length; i++) {
-    //     let room_name = Math.random().toString(36).substring(2, 7);
-    //     let a = io.sockets.adapter.rooms.get(room_name)
-    //     if (arry.includes(socket.id) && join_user.includes(socket.id)==false) {
-    //         console.log('i',i)
-    //         for (let j = 0; j < arry.length; j++) {
-    //             if (a) {
-    //                 if (a.size < 2) {
-    //                     socket.join(room_name);
-
-    //                     console.log('enter')
-    //                     io.to(room_name).emit('message', 'for your eyes only 1');
-    //                 }
-    //             } else {
-    //                 socket.join(room_name);
-    //             }
-    //         }
-    //         join_user.push(socket.id)
-
-    //     }
-    // }
-
     for (let i = 0; i < arry.length / 2; i++) {
         let room_name = 'room' + 'id' + i
         let a = io.sockets.adapter.rooms.get(room_name)
@@ -76,12 +51,12 @@ io.on('connection', async function (socket) {
         }
     }
 
+    console.log(socket['rooms'])
+
     socket.on('sendmes', function (roomname,message,socket_id) {
         io.to(roomname).emit("sendmessage",message,socket_id);
     });
 
-   
-  
     socket.on('disconnect', function () {
         console.log('User: ' + users[socket.id] + ' dishconnected');
         io.emit('user_disconnected', users[socket.id]);

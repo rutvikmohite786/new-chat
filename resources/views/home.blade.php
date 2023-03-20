@@ -62,12 +62,13 @@
             background: #11ff99;
             padding: 5px 10px;
             border-radius: 20px 20px 20px 0px;
-            max-width: 200px;
+            max-width: fit-content;
             height: auto;
         }
 
         #firstText {
             background: cyan;
+            margin-top:8px;
         }
 
         #letchat {
