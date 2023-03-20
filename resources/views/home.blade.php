@@ -86,8 +86,6 @@
             {{-- <section id="letchat">Hello, how are you?</section> --}}
             <input type="hidden" id="socket_id" value="">
             <input type="hidden" id="room_id" value="">
-            {{-- <section id="firstText">Hello, how are you?</section>
-            <section id="firstText">Hello, how are you?</section> --}}
         </div>
         <div id="type-box">
             <input type="text" placeholder="Message" id="text"></input>
@@ -120,9 +118,10 @@
             let roomname = $('#room_id').val()
             let message = $('#text').val()
             let socket_id = $('#socket_id').val()
+            if(message!=''){
             socket.emit("sendmes", roomname, message, socket_id);
+            }
             $('#text').val('')
-
         });
 
         $('#text').keypress(function(e) {
@@ -130,7 +129,7 @@
             let roomname = $('#room_id').val()
             let message = $('#text').val()
             let socket_id = $('#socket_id').val()
-            if (key == 13) // the enter key code
+            if (key == 13 && message!='') // the enter key code
             {
               socket.emit("sendmes", roomname, message, socket_id);
               $('#text').val('')
