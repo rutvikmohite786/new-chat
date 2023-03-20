@@ -81,13 +81,13 @@
 
     <main>
         <div id="display">
-            <br>
+            {{-- <br> --}}
 
-            <section id="letchat">Hello, how are you?</section>
+            {{-- <section id="letchat">Hello, how are you?</section> --}}
             <input type="hidden" id="socket_id" value="">
-
-            <section id="firstText">Hello, how are you?</section>
-            <section id="firstText">Hello, how are you?</section>
+            <input type="hidden" id="room_id" value="">
+            {{-- <section id="firstText">Hello, how are you?</section>
+            <section id="firstText">Hello, how are you?</section> --}}
         </div>
         <div id="type-box">
             <input type="text" placeholder="Message" id="text"></input>
@@ -97,9 +97,10 @@
         </div>
         <br>
     </main>
-    <script src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
+    <script src="http://192.168.1.15:3000/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script>
-        var socket = io.connect('http://127.0.0.1:3000');
+        var socket = io.connect('http://192.168.1.15:3000');
 
         socket.on('connect', () => {
             console.log(socket.id);
@@ -107,12 +108,44 @@
         });
 
         socket.once("message", (mess) => {
-              console.log(mess)
+            console.log(mess)
         });
 
+        socket.on('creatroom', (room) => {
+            console.log(room);
+            $('#room_id').val(room)
+        });
 
-        console.log(socket.id,'socketid')
+        $("#send").click(function() {
+            let roomname = $('#room_id').val()
+            let message = $('#text').val()
+            let socket_id = $('#socket_id').val()
+            socket.emit("sendmes", roomname, message, socket_id);
+            $('#text').val('')
 
+        });
+
+        $('#text').keypress(function(e) {
+            var key = e.which;
+            let roomname = $('#room_id').val()
+            let message = $('#text').val()
+            let socket_id = $('#socket_id').val()
+            if (key == 13) // the enter key code
+            {
+              socket.emit("sendmes", roomname, message, socket_id);
+              $('#text').val('')
+            }
+        });
+
+        socket.on('sendmessage', (mes, id) => {
+            let socket_id = $('#socket_id').val()
+            $('#text').val('')
+            if (socket_id == id) {
+                $('#display').append('<section id="firstText">' + mes + '</section>')
+            } else {
+                $('#display').append('<section id="secondText">' + mes + '</section>')
+            }
+        });
 
     </script>
 </body>

@@ -3,7 +3,7 @@ var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {
     cors: {
-        origin: "http://127.0.0.1:8000",
+        origin: "http://192.168.1.15:8000",
         methods: ["GET", "POST"]
     }
 });
@@ -11,13 +11,10 @@ var io = require('socket.io')(server, {
 const users = {};
 server.listen(3000);
 var arry = []
+var join_user = []
 io.on('connection', async function (socket) {
-  
-    console.log("Server Running...");
-    // console.log(socket.id);
-    // arry.push(socket.id)
 
-    // console.log(arry,'jhjhjhhj')
+    console.log("Server Running...");
     arry = []
 
     const sockets = await io.fetchSockets();
@@ -27,48 +24,66 @@ io.on('connection', async function (socket) {
         //io.to(socket.id).emit('message', 'for your eyes only');
     }
 
-
-
-    // console.log(arry)
-
     function removeDuplicates(arry) {
         return arry.filter((item,
             index) => arry.indexOf(item) === index);
     }
     console.log(removeDuplicates(arry));
 
+    // console.log(arry.includes(socket.id))
+    // console.log(arry.length)
 
+    // for (var i = 0; i < arry.length; i++) {
+    //     let room_name = Math.random().toString(36).substring(2, 7);
+    //     let a = io.sockets.adapter.rooms.get(room_name)
+    //     if (arry.includes(socket.id) && join_user.includes(socket.id)==false) {
+    //         console.log('i',i)
+    //         for (let j = 0; j < arry.length; j++) {
+    //             if (a) {
+    //                 if (a.size < 2) {
+    //                     socket.join(room_name);
 
-    // socket.on('create', function (room) {
-    //     console.log(room)
-    //     socket.nickname = 'Earl';
-    //     socket.join(room);
-    // });
+    //                     console.log('enter')
+    //                     io.to(room_name).emit('message', 'for your eyes only 1');
+    //                 }
+    //             } else {
+    //                 socket.join(room_name);
+    //             }
+    //         }
+    //         join_user.push(socket.id)
 
-    // var roster = io.of('/').in('room1').clients;
-    // console.log(roster)
+    //     }
+    // }
 
-    // roster.forEach(function (client) {
-    //     console.log('Username: ' + client.nickname);
-    // });
-    
+    for (let i = 0; i < arry.length / 2; i++) {
+        let room_name = 'room' + 'id' + i
+        let a = io.sockets.adapter.rooms.get(room_name)
 
-    //socket.join("room1");
-    // socket.room = 'room1';
-
-    var a = io.sockets.adapter.rooms.get('room1')
-    if(a){
-        if(a.size<2){
-            socket.join("room1");
-            console.log('enter')
-            io.to("room1").emit('message', 'for your eyes only 1');
+        if (join_user.includes(socket.id) == false) {
+            console.log(i)
+            if (a) {
+                if (a.size < 2) {
+                    socket.join(room_name);
+                    join_user.push(socket.id)
+                    console.log('enter')
+                    io.to(room_name).emit('creatroom', room_name);
+                }
+            } else {
+                socket.join(room_name);
+                io.to(room_name).emit('creatroom', room_name);
+                join_user.push(socket.id)
+            }
         }
-    }else{
-        socket.join("room1");
-    }    
+    }
 
+    socket.on('sendmes', function (roomname,message,socket_id) {
+        io.to(roomname).emit("sendmessage",message,socket_id);
+    });
+
+   
+  
     socket.on('disconnect', function () {
-        console.log('User: ' + users[socket.id] + ' disconnected');
+        console.log('User: ' + users[socket.id] + ' dishconnected');
         io.emit('user_disconnected', users[socket.id]);
         delete users[socket.id];
     });
